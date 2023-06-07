@@ -30,6 +30,18 @@ public:
 	/// <returns>大きさ</returns>
 	Vector2 GetSize()const { return this->size_; };
 
+	/// <summary>
+	///	位置の変更
+	/// </summary>
+	/// <param name="pos">位置</param>
+	void SetPosition(Vector2 pos);
+
+	/// <summary>
+	/// サイズの変更
+	/// </summary>
+	/// <param name="size"></param>
+	void SetSize(Vector2 size);
+
 private:
 	Vector2 position_;	//位置
 	Vector2 size_;		//大きさ

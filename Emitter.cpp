@@ -24,3 +24,13 @@ void Emitter::Draw()
 		0.0f, WHITE, kFillModeWireFrame
 	);
 }
+
+void Emitter::SetPosition(Vector2 pos)
+{
+	this->position_ = pos;
+}
+
+void Emitter::SetSize(Vector2 size)
+{
+	this->size_ = size;
+}

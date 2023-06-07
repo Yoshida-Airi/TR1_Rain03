@@ -44,6 +44,9 @@
     <ClCompile Include="ConvertString.cpp">
       <Filter>KamataEngine</Filter>
     </ClCompile>
+    <ClCompile Include="SplashParticle.cpp">
+      <Filter>KamataEngine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="C:\KamataEngine\DirectXGame\audio\Audio.h">
@@ -117,5 +120,6 @@
     <ClInclude Include="ConvertString.h" />
     <ClInclude Include="Particle.h" />
     <ClInclude Include="Emitter.h" />
+    <ClInclude Include="SplashParticle.h" />
   </ItemGroup>
 </Project>

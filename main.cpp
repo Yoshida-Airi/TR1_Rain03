@@ -16,7 +16,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	char keys[256] = {0};
 	char preKeys[256] = {0};
 
-	const int kNumParticles = 100; // パーティクルの数
+	const int kNumParticles = 300; // パーティクルの数
 	Particle* particle[kNumParticles];
 	for (int i = 0; i < kNumParticles; i++)
 	{
@@ -52,8 +52,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓描画処理ここから
 		///
 
-		//背景
-		Novice::DrawBox(0, 0, 1280, 720, 0.0f, BLACK, kFillModeSolid);
+		////背景
+		//Novice::DrawBox(0, 0, 1280, 720, 0.0f, BLACK, kFillModeSolid);
 
 		for (int i = 0; i < kNumParticles; i++)
 		{
