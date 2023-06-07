@@ -4,7 +4,7 @@
 Particle::Particle()
 {
 	this->emitter_ = new Emitter;
-
+	this->subEmitter_ = new Emitter;
 
 	this->position_ = { 0.0f,0.0f };
 	this->velocity_ = { 0.0f,0.0f };
@@ -14,10 +14,22 @@ Particle::Particle()
 	this->mass_ = 10.0f;
 	this->airResistance_ = { 0,0 };
 	this->airResistanceAcceleration_ = { 0, 0 };
-		
+
+	this->Wind_ = { 0.0f,0.0f };
 
 	this->restitution_ = 0.8f;
 	this->ground_ = { 0,700 };
+
+	this->isSplash_ = false;
+	for (int i = 0; i < numParticles; i++)
+	{
+		this->splashPosition_[i] = { 0.0f,0.0f };
+		this->splashVelocity_[i] = { 0.0f,kGravity_ };
+		this->splashSize_[i] = { 1.0f,1.0f };
+	}
+
+	lineStartY_ = position_.y;
+	lineEndY_ = position_.y - rand() % 700;
 
 }
 
@@ -26,14 +38,14 @@ Particle::Particle()
 Particle::~Particle()
 {
 	delete emitter_;
-	
+
 }
 
 //更新処理
 void Particle::Update()
 {
 	//もし生成されていなかったら
-	if (this->isActive_ == false )
+	if (this->isActive_ == false)
 	{
 		//エミッターの位置からランダムに位置を決める
 		Vector2 min;
@@ -45,12 +57,12 @@ void Particle::Update()
 		max.y = emitter_->GetPosition().y - emitter_->GetSize().y / 4;
 
 		this->position_.x = min.x + static_cast<float>(rand()) / RAND_MAX * (max.x - min.x);
-		this->position_.y = emitter_->GetPosition().y - static_cast<float>(rand()) / RAND_MAX * 1280.0f; // 100.0fはランダムな範囲の大きさを調整する値
+		this->position_.y = emitter_->GetPosition().y - static_cast<float>(rand()) / RAND_MAX * 700.0f; // 100.0fはランダムな範囲の大きさを調整する値
 
 
 		//生成する
 		this->isActive_ = true;
-		
+
 	}
 
 	//生成されていたら
@@ -84,23 +96,58 @@ void Particle::Update()
 		{
 			isActive_ = false;
 			this->velocity_ = { 0.0f,0.0f };
-		
+
 		}
 	}
 
 	//地面に当たったときの跳ね返り
 	if (this->isActive_ == true && this->position_.y >= this->ground_.y)
 	{
+		this->position_.y = this->ground_.y - this->size_.y / 2 - 1.0f;
+
+		this->subEmitter_->SetPosition(this->position_);
+		this->subEmitter_->SetSize(this->size_);
+
 		
+
+
 		isActive_ = false;
 
-		// 跳ね返る速度の計算
-		this->velocity_.y = -this->velocity_.y * this->restitution_;
+		isSplash_ = true;
 
-		// パーティクルを地面の少し上に移動して、はまらないようにする
-		this->position_.y = this->ground_.y - this->size_.y / 2 - 1.0f;
 	}
 
+	if (isSplash_ == true)
+	{
+		for (int i = 0; i < numParticles; i++)
+		{
+
+			// パーティクルの角度と距離を生成
+			angle = 270.0f + static_cast<float>(rand()) / RAND_MAX * (360.0f - 90.0f);
+
+			distance = static_cast<float>(rand()) / RAND_MAX * subEmitter_->GetSize().x / 2;
+
+			this->splashPosition_[i].x = subEmitter_->GetPosition().x + distance * cosf(angle * (static_cast<float>(M_PI) / 180.0f));
+			this->splashPosition_[i].y = subEmitter_->GetPosition().y + distance * sinf(angle * (static_cast<float>(M_PI) / 180.0f));
+
+
+			//速度を一定時間ごとに一定距離進ませる
+			this->splashVelocity_[i].x += this->acceleration_.x;
+			this->splashVelocity_[i].y += this->acceleration_.y;
+
+			//位置に速度を足す(進む)
+			this->splashPosition_[i].x += this->splashVelocity_[i].x * (1.0f / 60.0f);
+			this->splashPosition_[i].y += this->splashVelocity_[i].y * (1.0f / 60.0f);
+
+			// 跳ね返る速度の計算
+			this->splashVelocity_[i].y = -this->splashVelocity_[i].y * this->restitution_;
+		
+			if (i == 5)
+			{
+				isSplash_ = false;
+			}
+		}
+	}
 }
 
 
@@ -118,24 +165,40 @@ void Particle::Draw()
 	//円の描画
 	if (this->isActive_ == true)	//生成されていたら描画する
 	{
-		Novice::DrawEllipse
+		
+
+		Novice::DrawLine
 		(
-			static_cast<int>(position_.x), static_cast<int>(position_.y),
-			static_cast<int>(this->size_.x / 2), static_cast<int>(this->size_.y / 2),
-			0.0f, WHITE, kFillModeSolid
+			static_cast<int>(position_.x), static_cast<int>(lineStartY_),
+			static_cast<int>(position_.x), static_cast<int>(lineEndY_),
+			WHITE
 		);
 
-		/*Novice::DrawLine
-		(
-			static_cast<int>(position_.x), static_cast<int>(position_.y  ),
-			static_cast<int>(position_.x), static_cast<int>(position_.y + rand() % 700) ,
-			WHITE
-		);*/
-		
 
 	}
 
-	
+	//水しぶきの描画
+	if (isSplash_ == true)
+	{
+		for (int i = 0; i < numParticles; i++)
+		{
+
+			Novice::DrawEllipse
+			(
+				static_cast<int>(splashPosition_[i].x), static_cast<int>(splashPosition_[i].y),
+				static_cast<int>(splashSize_[i].x), static_cast<int>(splashSize_[i].y),
+				0.0f, WHITE, kFillModeSolid
+			);
+		}
+	}
+
+	Novice::DrawEllipse
+	(
+		static_cast<int>(position_.x), static_cast<int>(position_.y),
+		static_cast<int>(this->size_.x / 2), static_cast<int>(this->size_.y / 2),
+		0.0f, WHITE, kFillModeSolid
+	);
+
 	Novice::ScreenPrintf(0, 0, "%f", position_.y);
 
 	//エミッター(描画範囲)の描画

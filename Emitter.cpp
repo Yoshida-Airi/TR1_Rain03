@@ -4,7 +4,7 @@
 /// コンストラクタ
 Emitter::Emitter()
 {
-	this->position_ = { 200.0f,0.0f };
+	this->position_ = { 0.0f,0.0f };
 	this->size_ = { 1280.0f,16.0f };
 }
 
