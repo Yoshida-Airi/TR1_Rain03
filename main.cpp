@@ -16,7 +16,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	char keys[256] = {0};
 	char preKeys[256] = {0};
 
-	const int kNumParticles = 300; // パーティクルの数
+	const int kNumParticles = 500; // パーティクルの数
 	Particle* particle[kNumParticles];
 	for (int i = 0; i < kNumParticles; i++)
 	{
