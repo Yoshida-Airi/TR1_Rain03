@@ -54,7 +54,7 @@ private:
 	Vector2 ground_;	//地面の位置
 	float restitution_; // 跳ね返り係数
 
-	Vector2 Wind_;
+	Vector2 wind_;		//風力
 
 	Vector2 airResistance_;	//空気抵抗
 	Vector2 airResistanceAcceleration_;	//空気抵抗による加速度
@@ -62,16 +62,17 @@ private:
 	Emitter* emitter_;	//エミッター
 	Emitter* subEmitter_;
 
-	static const int numParticles = 5; // 跳ね返るパーティクルの数
+	static const int numParticles = 10; // 跳ね返るパーティクルの数
 	Vector2 splashPosition_[numParticles];
 	Vector2 splashVelocity_[numParticles];
+	Vector2 splashAcceleration_[numParticles];
 	Vector2 splashSize_[numParticles];
 	// パーティクルの角度と距離を生成
 	float angle ;
 	float distance ;
 
-	float lineStartY_;
-	float lineEndY_;
+	Vector2 lineStart_;
+	Vector2 lineEnd_;
 
 };
 
