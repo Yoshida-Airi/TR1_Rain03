@@ -12,7 +12,7 @@ Particle::Particle()
 
 	this->position_ = { 0.0f,0.0f };			//雨の位置
 	this->velocity_ = { 0.0f,0.0f };			//速度
-	this->acceleration_ = { 0.0f,kGravity_ };	//加速度
+	this->acceleration_ = { 0.0f,kGravity_.y };	//加速度
 	this->size_ = 10.0f;						//大きさ
 	this->isActive_ = false;					//生成されているか
 	this->mass_ = 0;							//質量
@@ -34,12 +34,12 @@ Particle::Particle()
 	rainDensity_ = 1000.0f;	//雨粒の密度
 	airDensity_ = 1.225f;	//空気の密度
 	k_ = 0.5f*100;			//空気抵抗係数
-	kGravity_ = 9.8f*100;		//重力加速度
+	kGravity_ = { 0.0f, 9.8f * 100 };		//重力加速度
 
 
 
-	this->wind_ = { -20.0f,0.0f };	//風
-
+	this->wind_ = { 0, 0 };
+	this->windSpeed_ = { 0.1f,0 };
 
 
 
@@ -52,7 +52,7 @@ Particle::Particle()
 		this->splashPosition_[i] = { 0.0f,0.0f };
 		this->splashVelocity_[i] = { 0.0f,0.0f };
 		this->splashSize_[i] = { 1.0f,1.0f };
-		this->splashAcceleration_[i] = { 0.0f,kGravity_ };
+		this->splashAcceleration_[i] = { 0.0f,kGravity_.y };
 	}
 
 	
@@ -91,11 +91,6 @@ void Particle::Update()
 		endPos_.x = position_.x;
 		endPos_.y = position_.y;
 
-
-		random = 200.0f + static_cast<float>(rand() % 101);
-
-
-
 		//生成する
 		this->isActive_ = true;
 
@@ -105,78 +100,47 @@ void Particle::Update()
 	if (this->isActive_ == true)
 	{
 
+		//風力を求める
+		wind_.x = 0.5f * airDensity_ * static_cast<float>(pow((windSpeed_.x), 2.0f)) * k_ * static_cast<float>(M_PI) * static_cast<float>(pow((size_ / 2.0f), 2.0f));
+		wind_.y = 0.5f * airDensity_ * static_cast<float>(pow((windSpeed_.y), 2.0f)) * k_ * static_cast<float>(M_PI) * static_cast<float>(pow((size_ / 2.0f), 2.0f));
+	
 		//質量の計算
 		mass_ = (4.0f / 3.0f) * static_cast<float>(M_PI) * static_cast<float>(pow((size_ / 2.0f), 3.0f)) * rainDensity_;
 		
 		//終端速度を求める
-		terminalVelocity_.x = ((2 * rainDensity_ * kGravity_) / (airDensity_ * static_cast<float>(M_PI) * static_cast<float>(pow((size_ / 2.0f), 2.0f)) * k_));
-		terminalVelocity_.y = ((2 * rainDensity_ * kGravity_) / (airDensity_ * static_cast<float>(M_PI) * static_cast<float>(pow((size_ / 2.0f), 2.0f)) * k_));
+		terminalVelocity_.x = ((2 * rainDensity_ * kGravity_.x) / (airDensity_ * static_cast<float>(M_PI) * static_cast<float>(pow((size_ / 2.0f), 2.0f)) * k_));
+		terminalVelocity_.y = ((2 * rainDensity_ * kGravity_.y) / (airDensity_ * static_cast<float>(M_PI) * static_cast<float>(pow((size_ / 2.0f), 2.0f)) * k_));
 
-		//空気抵抗
-		airResistance_ =
-		{
-			(0.5f * this->k_ * static_cast<float>(M_PI) * static_cast<float>(pow((size_ / 2),2)) * static_cast<float>(pow(velocity_.x,2))),
-			(0.5f * this->k_ * static_cast<float>(M_PI) * static_cast<float>(pow((size_ / 2),2)) * static_cast<float>(pow(velocity_.y,2))),
-		};
+		terminalWindVelocity_ = terminalVelocity_;
+		
 
-		//空気抵抗による加速度
-		airResistanceAcceleration_ =
-		{
-			(airResistance_.x / mass_),
-			(airResistance_.y / mass_)
-		};
-
-		//重力による加速度
-		gravityAcceleration_ =
-		{
-			(0),
-			(kGravity_)
-		};
-
-		//風による加速度
-		windAcceleration_ =
-		{
-			(wind_.x / mass_),
-			(wind_.y / mass_)
-		};
-
-			//加速度の更新
-		Vector2 totalAccleration;
-		totalAccleration.x = gravityAcceleration_.x - airResistanceAcceleration_.x;
-		totalAccleration.y = gravityAcceleration_.y - airResistanceAcceleration_.y;
-
-
-		//加速度の更新
-		Vector2 totalWindAccleration;
-		totalWindAccleration.x = gravityAcceleration_.x - airResistanceAcceleration_.x + windAcceleration_.x;
-		totalWindAccleration.y = gravityAcceleration_.y - airResistanceAcceleration_.y + windAcceleration_.y;
-
-
-
-
-		//this->acceleration_.y = kGravity_ + airResistanceAcceleration_.y;
-
-		////風力の適用
-		//acceleration_.x += wind_.x / mass_.x;
-		//acceleration_.y += wind_.y / mass_.y;
-
-
+		terminalWindVelocity_.x += wind_.x;
+		terminalWindVelocity_.y += wind_.y;
 
 		//速度の更新
-		this->velocity_.x += totalAccleration.x * (1.0f / 60.0f);
-		this->velocity_.y += totalAccleration.y * (1.0f / 60.0f);
+		this->velocity_.x += terminalWindVelocity_.x * (1.0f / 60.0f);
+		this->velocity_.y += terminalWindVelocity_.y * (1.0f / 60.0f);
 
-		this->endvel_.x += totalAccleration.x * (1.0f / 60.0f);
-		this->endvel_.y += totalAccleration.y * (1.0f / 60.0f);
+	
+
+
+		this->endvel_.x += terminalVelocity_.x * (1.0f / 60.0f);
+		this->endvel_.y += terminalVelocity_.y * (1.0f / 60.0f);
+
+		Vector2 copyEndVel;
+		copyEndVel.x = position_.x;
+		copyEndVel.y = position_.y;
+
+	
 
 		//位置の更新
 		position_.x += this->velocity_.x * (1.0f / 60.0f) ;
 		position_.y += this->velocity_.y * (1.0f / 60.0f) ;
 
-		endPos_.x += this->endvel_.x * (1.0f / 60.0f);
-		endPos_.y += this->endvel_.y * (1.0f / 60.0f);
+		endPos_.x += this->endvel_.x * (1.0f / 60.0f) ;
+		endPos_.y += this->endvel_.y * (1.0f / 60.0f) ;
 
-		if (position_.y >= 720)
+		if (position_.y >= ground_.y)
 		{
 			isActive_ = false;
 			this->velocity_ = { 0.0f,0.0f };
@@ -185,17 +149,11 @@ void Particle::Update()
 
 	
 
-		lineStart_.x = position_.x + wind_.x;
-		lineStart_.y = position_.y + wind_.y;
+		lineStart_.x = position_.x;
+		lineStart_.y = position_.y;
 		lineEnd_.x = endPos_.x;
-		lineEnd_.y = endPos_.y - random;
-		/*pos.y = lineEnd_.y;*/
+		lineEnd_.y = endPos_.y-200 ;
 	
-		//float deltaY = lineEnd_.y - lineStart_.y;
-		//float windEffect = 0.5f*10000; // 風の影響の係数
-		//deltaY += wind_.y * (1.0f / 60.0f) * windEffect;
-		//lineEnd_.y = lineStart_.y + deltaY;
-
 
 
 	}
@@ -273,12 +231,12 @@ void Particle::Draw()
 	//雨の描画
 	if (this->isActive_ == true)	//生成されていたら描画する
 	{
-	/*	Novice::DrawEllipse
+		Novice::DrawEllipse
 		(
 			static_cast<int>(position_.x), static_cast<int>(position_.y),
 			static_cast<int>(this->size_ / 2), static_cast<int>(this->size_ / 2),
 			0.0f, WHITE, kFillModeSolid
-		);*/
+		);
 
 		Novice::DrawLine
 		(

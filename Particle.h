@@ -53,14 +53,17 @@ private:
 	float rainDensity_;	//雨粒の密度
 	float airDensity_;	//空気の密度
 	float k_;			//空気抵抗係数
-	float kGravity_;	//重力加速度
+	Vector2 kGravity_;	//重力加速度
 
 	Vector2 terminalVelocity_;	//終端速度
+	Vector2 terminalWindVelocity_;
 
 	Vector2 ground_;	//地面の位置
 	float restitution_; // 跳ね返り係数
 
 	Vector2 wind_;		//風力
+	Vector2 windSpeed_;
+
 
 	Vector2 airResistance_;	//空気抵抗
 	Vector2 airResistanceAcceleration_;	//空気抵抗による加速度
@@ -82,7 +85,6 @@ private:
 	Vector2 lineStart_;
 	Vector2 lineEnd_;
 
-	
 	float random;
 
 };

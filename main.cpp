@@ -20,7 +20,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	char keys[256] = {0};
 	char preKeys[256] = {0};
 
-	const int kNumParticles = 50; // パーティクルの数
+	const int kNumParticles = 100; // パーティクルの数
 	Particle* particle[kNumParticles];
 	for (int i = 0; i < kNumParticles; i++)
 	{
@@ -46,7 +46,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//パーティクルの更新
 		for (int i = 0; i < kNumParticles; i++)
 		{
+			
 			particle[i]->Update();
+	
 		}
 
 
