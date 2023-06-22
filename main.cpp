@@ -1,11 +1,15 @@
 #include <Novice.h>
 #include"Particle.h"
+#include "ImGuiManager.h"
+
 
 const char kWindowTitle[] = "LE2B_28_ヨシダアイリ_タイトル";
 
 
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
+
+
 
 	// ライブラリの初期化
 	const int kWindowWidth = 1280;
@@ -23,6 +27,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		particle[i] = new Particle;
 	}
 
+	
+
 	// ウィンドウの×ボタンが押されるまでループ
 	while (Novice::ProcessMessage() == 0) {
 		// フレームの開始
@@ -36,11 +42,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓更新処理ここから
 		///
 
+
 		//パーティクルの更新
 		for (int i = 0; i < kNumParticles; i++)
 		{
 			particle[i]->Update();
 		}
+
+
 
 
 		///
@@ -64,6 +73,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		Novice::ScreenPrintf(0, 0, "%d", particle[1]);
 
+
+
 		///
 		/// ↑描画処理ここまで
 		///
@@ -83,6 +94,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		delete particle[i];
 		particle[i] = nullptr; // ヌルポインタに設定しておく
 	}
+
+
 
 	// ライブラリの終了
 	Novice::Finalize();

@@ -4,7 +4,6 @@
 #include"Emitter.h"
 
 
-
 class Particle
 {
 public:
@@ -34,22 +33,29 @@ public:
 	/// </summary>
 	void Draw();
 
-	/// <summary>
-	/// 水の跳ね返り
-	/// </summary>
-	void Splash();
 
 
 private:
 	Vector2 position_;		//位置
 	Vector2 velocity_;		//速度
 	Vector2 acceleration_;	//加速度
-	Vector2 size_;			//大きさ
-	Vector2 mass_;			//質量
-	const float k_ = -0.6f;		//空気抵抗係数
-	const float kGravity_ = 9.8f * 100;	//重力加速度
+	float size_;			//大きさ(直径)
+	float mass_;			//質量
+	
+	Vector2 endPos_;
+	Vector2 endvel_;
+	Vector2 endAcc_;
+
+
 	bool isActive_;			//生成されているか　true:生成されている
 	bool isSplash_;
+
+	float rainDensity_;	//雨粒の密度
+	float airDensity_;	//空気の密度
+	float k_;			//空気抵抗係数
+	float kGravity_;	//重力加速度
+
+	Vector2 terminalVelocity_;	//終端速度
 
 	Vector2 ground_;	//地面の位置
 	float restitution_; // 跳ね返り係数
@@ -58,6 +64,8 @@ private:
 
 	Vector2 airResistance_;	//空気抵抗
 	Vector2 airResistanceAcceleration_;	//空気抵抗による加速度
+	Vector2 gravityAcceleration_;		//重力による加速度
+	Vector2 windAcceleration_;
 
 	Emitter* emitter_;	//エミッター
 	Emitter* subEmitter_;
@@ -73,6 +81,9 @@ private:
 
 	Vector2 lineStart_;
 	Vector2 lineEnd_;
+
+	
+	float random;
 
 };
 
