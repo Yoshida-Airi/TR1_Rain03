@@ -36,6 +36,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓更新処理ここから
 		///
 
+		//パーティクルの更新
 		for (int i = 0; i < kNumParticles; i++)
 		{
 			particle[i]->Update();
@@ -59,6 +60,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		{
 			particle[i]->Draw();
 		}
+
+
+		Novice::ScreenPrintf(0, 0, "%d", particle[1]);
 
 		///
 		/// ↑描画処理ここまで

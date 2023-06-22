@@ -11,11 +11,11 @@ Particle::Particle()
 	this->acceleration_ = { 0.0f,kGravity_ };	//加速度
 	this->size_ = { 10.0f,10.0f };				//大きさ
 	this->isActive_ = false;					//生成されているか
-	this->mass_ = 10.0f;						//質量
+	this->mass_ = { 10.0f,10.0f };						//質量
 	this->airResistance_ = { 0,0 };				//空気抵抗
 	this->airResistanceAcceleration_ = { 0, 0 };	//空気抵抗による加速度
 
-	this->wind_ = { 20.0f,0.0f };	//風
+	this->wind_ = { 10.0f,0.0f };	//風
 
 	this->restitution_ = 0.9f;		//跳ね返り係数
 	this->ground_ = { 0,700.0f };	//地面の位置
@@ -69,7 +69,7 @@ void Particle::Update()
 	{
 
 
-		//空気抵抗
+		//空気抵抗による加速度
 		airResistance_ =
 		{
 			(this->k_ * -this->velocity_.x),
@@ -79,15 +79,15 @@ void Particle::Update()
 		//空気抵抗による加速度
 		airResistanceAcceleration_ =
 		{
-			-airResistance_.x / this->mass_,
-			-airResistance_.y / this->mass_
+			-airResistance_.x / this->mass_.x,
+			-airResistance_.y / this->mass_.y
 		};
 
 		this->acceleration_.y = kGravity_ + airResistanceAcceleration_.y;
 
 		//風力の適用
-		acceleration_.x += wind_.x / mass_;
-		acceleration_.y += wind_.y / mass_;
+		acceleration_.x += wind_.x / mass_.x;
+		acceleration_.y += wind_.y / mass_.y;
 
 
 
@@ -109,8 +109,12 @@ void Particle::Update()
 		}
 
 
-		lineStart_.x = position_.x;
-		lineStart_.y = position_.y;
+		const float positonX = position_.x;
+		const float positionY = position_.y;
+	
+
+		lineStart_.x = positonX;
+		lineStart_.y = positionY;
 		lineEnd_.x = position_.x;
 		lineEnd_.y = position_.y - 200.0f - static_cast<float>(rand() % 700);
 
@@ -189,18 +193,18 @@ void Particle::Draw()
 
 	//雨の描画
 	if (this->isActive_ == true)	//生成されていたら描画する
-	{
+	{/*
 		Novice::DrawEllipse
 		(
 			static_cast<int>(position_.x), static_cast<int>(position_.y),
 			static_cast<int>(this->size_.x / 2), static_cast<int>(this->size_.y / 2),
 			0.0f, WHITE, kFillModeSolid
-		);
+		);*/
 
 		Novice::DrawLine
 		(
-			static_cast<int>(position_.x), static_cast<int>(lineStart_.y),
-			static_cast<int>(position_.x), static_cast<int>(lineEnd_.y),
+			static_cast<int>(lineStart_.x), static_cast<int>(lineStart_.y),
+			static_cast<int>(lineEnd_.x), static_cast<int>(lineEnd_.y),
 			WHITE
 		);
 
@@ -230,9 +234,6 @@ void Particle::Draw()
 		BLUE
 	);
 
-
-	Novice::ScreenPrintf(0, 0, "%f", position_.y);
-	Novice::ScreenPrintf(0, 20, "%f", lineStart_.x);
 
 	//エミッター(描画範囲)の描画
 	emitter_->Draw();

@@ -45,9 +45,9 @@ private:
 	Vector2 velocity_;		//速度
 	Vector2 acceleration_;	//加速度
 	Vector2 size_;			//大きさ
-	float mass_;			//質量
+	Vector2 mass_;			//質量
 	const float k_ = -0.6f;		//空気抵抗係数
-	const float kGravity_ = 9.8f*100;	//重力加速度
+	const float kGravity_ = 9.8f * 100;	//重力加速度
 	bool isActive_;			//生成されているか　true:生成されている
 	bool isSplash_;
 
