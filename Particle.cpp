@@ -39,7 +39,7 @@ Particle::Particle()
 
 
 	this->wind_ = { 0, 0 };
-	this->windSpeed_ = { 0.1f,0 };
+	this->windSpeed_ = { 0.2f,0.0f };
 
 
 
@@ -70,7 +70,14 @@ Particle::~Particle()
 void Particle::Update()
 {
 
-
+	if (Novice::CheckHitKey(DIK_LEFT))
+	{
+		windSpeed_.x -= 0.001f;
+	}
+	if (Novice::CheckHitKey(DIK_RIGHT))
+	{
+		windSpeed_.x += 0.001f;
+	}
 
 
 	//もし生成されていなかったら
@@ -114,12 +121,14 @@ void Particle::Update()
 		terminalWindVelocity_ = terminalVelocity_;
 		
 
-		terminalWindVelocity_.x += wind_.x;
-		terminalWindVelocity_.y += wind_.y;
+		acceleration_.x = wind_.x / mass_;
+		acceleration_.y = wind_.y / mass_;
+
+
 
 		//速度の更新
-		this->velocity_.x += terminalWindVelocity_.x * (1.0f / 60.0f);
-		this->velocity_.y += terminalWindVelocity_.y * (1.0f / 60.0f);
+		this->velocity_.x += (acceleration_.x + terminalWindVelocity_.x) * (1.0f / 60.0f);
+		this->velocity_.y += (acceleration_.y + terminalWindVelocity_.y) * (1.0f / 60.0f);
 
 	
 
@@ -149,8 +158,8 @@ void Particle::Update()
 
 	
 
-		lineStart_.x = position_.x;
-		lineStart_.y = position_.y;
+		lineStart_.x = position_.x + wind_.x;
+		lineStart_.y = position_.y + wind_.y;
 		lineEnd_.x = endPos_.x;
 		lineEnd_.y = endPos_.y-200 ;
 	
@@ -220,6 +229,10 @@ void Particle::Update()
 		}
 
 	}
+
+
+
+
 }
 
 
@@ -231,12 +244,12 @@ void Particle::Draw()
 	//雨の描画
 	if (this->isActive_ == true)	//生成されていたら描画する
 	{
-		Novice::DrawEllipse
+		/*Novice::DrawEllipse
 		(
 			static_cast<int>(position_.x), static_cast<int>(position_.y),
 			static_cast<int>(this->size_ / 2), static_cast<int>(this->size_ / 2),
 			0.0f, WHITE, kFillModeSolid
-		);
+		);*/
 
 		Novice::DrawLine
 		(

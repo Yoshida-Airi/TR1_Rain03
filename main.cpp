@@ -17,16 +17,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Novice::Initialize(kWindowTitle, kWindowWidth, kWindowHeight);
 
 	// キー入力結果を受け取る箱
-	char keys[256] = {0};
-	char preKeys[256] = {0};
+	char keys[256] = { 0 };
+	char preKeys[256] = { 0 };
 
 	const int kNumParticles = 100; // パーティクルの数
 	Particle* particle[kNumParticles];
+
 	for (int i = 0; i < kNumParticles; i++)
 	{
 		particle[i] = new Particle;
 	}
-
+	
 	
 
 	// ウィンドウの×ボタンが押されるまでループ
