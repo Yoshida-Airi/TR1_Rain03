@@ -33,7 +33,7 @@ Particle::Particle()
 
 	rainDensity_ = 1000.0f;	//雨粒の密度
 	airDensity_ = 1.225f;	//空気の密度
-	k_ = 0.5f*100;			//空気抵抗係数
+	k_ = 0.5f * 100;		//空気抵抗係数
 	kGravity_ = { 0.0f, 9.8f * 100 };		//重力加速度
 
 

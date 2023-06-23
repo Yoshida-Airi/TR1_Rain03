@@ -28,7 +28,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		particle[i] = new Particle;
 	}
 	
-	
+
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while (Novice::ProcessMessage() == 0) {
@@ -43,17 +43,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓更新処理ここから
 		///
 
-
+		
 		//パーティクルの更新
 		for (int i = 0; i < kNumParticles; i++)
 		{
-			
 			particle[i]->Update();
-	
 		}
-
-
-
 
 		///
 		/// ↑更新処理ここまで
