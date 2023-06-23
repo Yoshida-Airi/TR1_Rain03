@@ -106,6 +106,15 @@ void Particle::Update()
 	//生成されていたら
 	if (this->isActive_ == true)
 	{
+		if (Novice::CheckHitKey(DIK_LEFT))
+		{
+			windSpeed_.x -= 0.1f;
+		}
+		if (Novice::CheckHitKey(DIK_RIGHT))
+		{
+			windSpeed_.x += 0.1f;
+		}
+
 
 		//風力を求める
 		/*wind_.x = 0.5f * airDensity_ * static_cast<float>(pow((windSpeed_.x), 2.0f)) * k_ * static_cast<float>(M_PI) * static_cast<float>(pow((size_ / 2.0f), 2.0f));
@@ -285,6 +294,7 @@ void Particle::Draw()
 		BLUE
 	);
 
+	Novice::ScreenPrintf(0, 0, "%f", windSpeed_.x);
 
 	//エミッター(描画範囲)の描画
 	emitter_->Draw();
