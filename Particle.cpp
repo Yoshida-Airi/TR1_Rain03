@@ -39,7 +39,7 @@ Particle::Particle()
 
 
 	this->wind_ = { 0, 0 };
-	this->windSpeed_ = { 0.2f,0.0f };
+	this->windSpeed_ = { 5.0f,0.0f };
 
 
 
@@ -108,9 +108,12 @@ void Particle::Update()
 	{
 
 		//風力を求める
-		wind_.x = 0.5f * airDensity_ * static_cast<float>(pow((windSpeed_.x), 2.0f)) * k_ * static_cast<float>(M_PI) * static_cast<float>(pow((size_ / 2.0f), 2.0f));
+		/*wind_.x = 0.5f * airDensity_ * static_cast<float>(pow((windSpeed_.x), 2.0f)) * k_ * static_cast<float>(M_PI) * static_cast<float>(pow((size_ / 2.0f), 2.0f));
 		wind_.y = 0.5f * airDensity_ * static_cast<float>(pow((windSpeed_.y), 2.0f)) * k_ * static_cast<float>(M_PI) * static_cast<float>(pow((size_ / 2.0f), 2.0f));
-	
+	*/
+		wind_.x = (1.0f / 2.0f) * airDensity_ * static_cast<float>(pow((windSpeed_.x), 2.0f));
+		wind_.y = (1.0f / 2.0f) * airDensity_ * static_cast<float>(pow((windSpeed_.y), 2.0f));
+
 		//質量の計算
 		mass_ = (4.0f / 3.0f) * static_cast<float>(M_PI) * static_cast<float>(pow((size_ / 2.0f), 3.0f)) * rainDensity_;
 		
@@ -121,16 +124,14 @@ void Particle::Update()
 		terminalWindVelocity_ = terminalVelocity_;
 		
 
-		acceleration_.x = wind_.x / mass_;
-		acceleration_.y = wind_.y / mass_;
+		acceleration_.x = wind_.x ;
+		acceleration_.y = wind_.y ;
 
 
 
 		//速度の更新
 		this->velocity_.x += (acceleration_.x + terminalWindVelocity_.x) * (1.0f / 60.0f);
 		this->velocity_.y += (acceleration_.y + terminalWindVelocity_.y) * (1.0f / 60.0f);
-
-	
 
 
 		this->endvel_.x += terminalVelocity_.x * (1.0f / 60.0f);
@@ -158,8 +159,8 @@ void Particle::Update()
 
 	
 
-		lineStart_.x = position_.x + wind_.x;
-		lineStart_.y = position_.y + wind_.y;
+		lineStart_.x = position_.x;
+		lineStart_.y = position_.y;
 		lineEnd_.x = endPos_.x;
 		lineEnd_.y = endPos_.y-200 ;
 	
